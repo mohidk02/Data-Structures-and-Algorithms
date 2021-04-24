@@ -1,0 +1,82 @@
+#include<iostream>
+using namespace std;
+template<class KeyType>
+class Stack
+{ 
+	private:
+	KeyType *arr;
+	int top;			// top is the index of last element
+	int size;			// Size of Stack
+public:
+// constructor , creates an empty stack
+Stack( int s)
+{
+	arr=new KeyType[s];
+    size=s;
+	top=-1;
+}
+// returns true if Stack is full, otherwise return false
+bool IsFull()
+{
+if(top==size-1)
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+//If number of elements in the Stack is zero return true, otherwise return false
+bool IsEmpty()
+{
+if(top==-1)
+	return true;
+else
+	return false;
+}
+
+// If Stack is not full, insert item into the Stack. Must be an O(1) operation
+void Push(const KeyType item)
+{
+top++;
+arr[top]=item;
+}
+
+// If Stack is empty return 0 or NULL;
+// else return appropriate item from the Stack. Must be an O(1) operation
+KeyType Pop()
+{
+	KeyType item;
+	if(IsEmpty())
+	{
+	return 0;
+	}
+	else
+	{
+		item= arr[top];
+		top--;
+		return item;
+	}
+}
+};
+
+
+int main()
+{   	
+	Stack<int> *st= new Stack<int>(1000);
+
+	if(st->IsEmpty())
+		cout<<"Stack is currently empty"<<endl;
+
+	st->Push(1);
+	st->Push(2);
+	st->Push(3);
+
+	while (!st->IsEmpty())
+	{
+		int value=st->Pop();
+		cout<<value<<endl;
+	}
+	return 0;
+}
