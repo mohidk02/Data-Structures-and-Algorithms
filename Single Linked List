@@ -30,7 +30,8 @@ void swap(Node **_node,int key1,int key2)
  
     //Search Location of first key
     Node *prev1 = NULL, *curr1 = *_node;
-    while (curr1 && curr1->data != key1) {
+    while (curr1 && curr1->data != key1) 
+    {
         prev1 = curr1;
         curr1 = curr1->next;
     }
