@@ -1,0 +1,213 @@
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class Node
+{
+   public: 
+	     
+	     Node(T element);
+		 void setdata(T pval); 
+		 T getdata();
+		 Node* getnext();
+		 void setnext(Node *x);
+   private: 
+	     T data;
+		 Node *next ;
+};
+
+
+template <typename T>
+Node<T>::Node(T element)
+{
+	data=element;
+	next=NULL;
+}
+
+
+template <typename T>
+void Node<T>:: setdata(T pval)
+{
+	data=pval;
+}
+
+
+template <typename T>
+ T Node<T>::getdata()
+ {
+	 return data;
+ }
+template <typename T>
+Node<T> * Node<T>::getnext()
+{
+	return next; 
+}
+
+template <typename T>
+void Node<T>::setnext(Node *x)
+{
+	next=x;
+}
+
+
+
+
+template<typename T>
+
+class List
+{
+   public: 
+
+	     List();
+		 void Insert(Node<T>* pBefore, Node<T>* pNew);
+		 void Delete(Node<T>* pToBeDeleted);
+		 void printList();
+   private:
+	     Node<T> *first ;
+};
+template<typename T>
+List<T>::List()
+{
+	first=NULL;
+}
+template<typename T>
+void List<T>:: Insert(Node<T>* pbefore, Node<T>* pnew)
+{
+	if(pbefore)
+	{
+		Node<T>*temp=pbefore->getnext();
+		pnew->setnext(temp);
+		pbefore->setnext(pnew);
+	}
+	else
+	{
+		if(first==NULL)
+			first=pnew;
+		else
+		{
+			pnew->setnext(first);
+			first=pnew;
+		}
+
+	}
+}
+
+template<class T>
+void List<T>:: Delete(Node<T>* pToBeDeleted)
+{
+	Node<T>*temp=first;
+	if(temp)
+	{
+		if(pToBeDeleted==first)
+		{
+			Node<T>*temp=first;
+			first=first->getnext();
+			delete temp;
+		}
+		else
+		{
+			while(temp->getnext()!=pToBeDeleted)
+			{
+				temp=temp->getnext();
+
+			}
+			temp->setnext(pToBeDeleted->getnext());
+			delete pToBeDeleted;
+		}
+	}
+	else
+	{
+		cout<<"List is empty."<<endl;
+	}
+}
+
+template<class DT>
+class Queue
+{
+private:
+	
+List<DT>* l;
+Node<DT>* head;
+Node<DT>* tail;
+
+public:
+	//contructor
+	Queue()
+	{
+	l=new List<DT>();
+	head=NULL;
+	tail=NULL;
+	}
+
+//puts element at the rear end of the Queue if it is not full. Must be O(1)
+	void Put(DT element)
+	{
+		Node<DT> *temp;
+		if(head==NULL)
+		{
+		head= new Node<DT>(element);
+		l->Insert(NULL,head);
+	    tail=head;
+		}
+		else
+		{
+		temp= new Node<DT>(element);
+		l->Insert(tail,temp);
+		tail=tail->getnext();
+		
+		}
+	}
+
+//if queue not empty then delete the element at front of the Queue. Must be O(1)
+	DT Get()
+	{
+		if(IsEmpty()==false)
+		{
+		Node<DT> *temp = head;
+		head=head->getnext();
+		return temp->getdata();
+		delete (temp);
+		}
+		return 0;
+	}
+
+	//return true if the Queue is empty and false if it is not 
+	bool IsEmpty()
+	{
+		if(head==NULL)
+		{
+		return true;
+		}
+		else 
+			return false;
+	}
+	//return true if the Queue is full and false if it is not
+//required only when the underlying data structure is array
+	bool IsFull()
+	{
+	return false;
+	}
+
+};
+
+
+
+int main()
+{   	
+	Queue<int> *q =new Queue<int>();
+
+	if(q->IsEmpty())
+		cout<<"Queue is currently empty"<<endl;
+
+	q->Put(1);
+	q->Put(2);
+	q->Put(3);
+
+	while (!q->IsEmpty())
+	{
+		int value=q->Get();
+		cout<<value<<endl;
+	}
+	return 0;
+
+}
