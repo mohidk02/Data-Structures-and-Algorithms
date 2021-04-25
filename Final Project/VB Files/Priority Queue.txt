@@ -1,0 +1,82 @@
+#include<iostream>
+#include<fstream>
+#include<queue>
+#include"Graph.h"
+using namespace std;
+
+class clients
+{
+private:
+	int psize;
+	double *ID;
+	string *User;	
+	queue<double> *q;
+	queue<double> *p;
+public:
+	clients(int s, string x)
+	{
+		psize = s;
+		q = new queue<double>();
+		p = new queue<double>();
+		ID = new double[psize];
+		User = new string [psize];
+		Take_clients_info(x);
+	}
+	void Take_clients_info(string filename)
+	{
+		ifstream in3;
+		in3.open(filename);
+		ofstream out;
+		out.open("clients_temp.txt");
+		double *premium = new double[psize];
+		for (int i = 0; i < psize; i++)
+			premium[i] = 0;
+		double *normal = new double[psize];
+		for (int i = 0; i < psize; i++)
+			normal[i] = 0;
+		int pcount = 0;
+		int ncount = 0;
+		double id=0;
+		int y;
+		in3 >> y;
+		string city1, city2, user,user2;
+		while (!in3.eof())
+		{
+			in3 >> id >> city1 >> city2 >> user >> user2;
+			if (user == "Normal")
+				normal[ncount++] = id;
+			else if (user == "Premium")
+				premium[pcount++] = id;
+			out << id << " " << city1 << " " << city2 << " " << user << " " << user2 << endl;
+
+		}
+		//////////////////////////////////////////////////////  MERGE ///////////////////////////////////////////////
+		int count = 0;
+		pcount = 0;
+		ncount = 0;
+		double s=0;
+		while (premium[pcount]!=0)
+		{
+			ID[count++] = premium[pcount];
+			q->push(premium[pcount]);
+			pcount++;
+		}
+		while (normal[ncount] != 0)
+		{
+			ID[count++] = normal[ncount];
+			q->push(normal[ncount]);
+			ncount++;
+		}
+		
+		delete[]premium;
+		delete[]normal;
+	}
+	void equaling_queues(queue<double>&l)
+	{
+		while (!q->empty())
+		{
+			l.push(q->front());
+			q->pop();
+		}
+	}	
+};

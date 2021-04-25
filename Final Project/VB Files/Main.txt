@@ -1,0 +1,111 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<fstream>
+#include<queue>
+#include"Graph.h"
+#include"PriorityQueue.h"
+
+void main()
+{
+	
+	/////////////////////////////////////// Taking input to initialize arrays ////////////////////////////////////
+	ifstream in;
+	string name;
+	name = "citydataEX.txt";
+	in.open(name);
+	int x;
+	in >> x;
+	graph g(x, name);
+	in.close();
+	ifstream in2;
+	string client;
+	client = "clients2.txt";
+	in2.open(client);
+	int psize;
+	in2 >> psize;
+	in2.close();
+	clients c(psize ,client);
+	queue<double> s;
+	c.equaling_queues(s);
+	system("CLS");
+	cout << "_________________________________________________________________________\n";
+	cout << " *ENTER 1 TO DISPLAY GIVEN DATA \n *ENTER 2 TO DISPLAY ASSIGNED NUMBERS TO CITIES \n *ENTER 3 TO DISPLAY THE SHORTEST DISTANCES OF CITIES \n *ENTER 4 TO DISPLAY MINIMUM NUMBER OF HOPS OF CITIES \n *ENTER 5 TO ASSIGN CARS TO USERS \n *ENTER 6 FOR BUS SERVICE (MINIMUM COST PATHS) \n *ENTER 0 TO EXIT \n";
+	cout << "_________________________________________________________________________\n";
+	string choice="-1";
+	while (choice != "0")
+	{
+		cout << "Enter Your Choice:";
+		cin >> choice; cout << endl;
+		if (choice == "1")
+		{
+			g.Display_file_data(name);
+		}
+		else if (choice == "2")
+			g.print_cities();
+		else if (choice == "3" || choice == "4")
+		{
+			g.User_choice(choice);
+		}
+		else if (choice == "5")
+		{	double ss = 0;
+			double id;
+			string start, end, user, user2;
+			cout << endl;
+				while (!s.empty())
+				{
+					ifstream in4;
+					in4.open("clients_temp.txt");
+					ss = s.front();
+
+					while (!in4.eof())
+					{
+						bool found = false;
+						in4 >> id >> start >> end >> user >> user2;
+						if (ss == id)
+						{
+							if (user == "Premium")
+							{
+								if (g.check_cars(start) == true)
+								{
+									int x, y;
+									cout << "User " << id << ": PREMIUM" << endl;
+									g.find_city(start, x);
+									g.find_city(end, y);
+									g.fare_calculation(x,y,15);
+									found = true;
+								}
+								else
+									cout << "ALL CARS ARE BOOKED" << endl;
+							}
+							else if (user == "Normal")
+							{
+								if (g.check_cars(start) == true)
+								{
+									int x, y;
+									cout << "User " << id << ": NORMAL" << endl;
+									cout << "User: Normal" << endl;
+									g.find_city(start, x);
+									g.find_city(end, y);
+									g.fare_calculation(x, y, 15);
+								}
+								else
+								{
+									cout << "ALL CARS ARE BOOKED" << endl;
+									break;
+								}
+							}
+						}
+
+					}
+					s.pop();
+				}
+	         	cout << "**************************************************************************************************************\n" << endl;
+		}
+		else if (choice == "6")
+		{
+			g.User_choice(choice);
+		}
+	}
+}
+	

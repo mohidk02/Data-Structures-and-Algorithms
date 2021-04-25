@@ -1,0 +1,421 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <fstream>
+#include <string>
+#include <cstring>
+using namespace std;
+#ifndef GRAPH_H
+#define GRAPH_H
+
+class graph
+{
+private:
+	double **distance_matrix;
+	double **cost_matrix;
+	int **link_matrix;
+	string *cities;
+	double *cars;
+	string **path;
+	double **path_num;
+	int size;
+	int inc = 0;
+	int hashsize = 0;
+public:
+	graph()
+	{
+	}
+	graph(int s, string x)
+	{
+		size = s;
+		////////////////////////////////////////// DISTANCE MATRIX //////////////////////////////////////////////
+		distance_matrix = new double*[size];
+		for (int i = 0; i < size; i++)
+			distance_matrix[i] = new double[size];
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+			{
+				distance_matrix[i][j] = 0;
+			}
+		}
+		////////////////////////////////////////// COST MATRIX //////////////////////////////////////////////
+		cost_matrix = new double*[size];
+		for (int i = 0; i < size; i++)
+			cost_matrix[i] = new double[size];
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+			{
+				cost_matrix[i][j] = 0;
+			}
+		}
+		/////////////////////////////////////////// LINK MATRIX //////////////////////////////////////////////
+		link_matrix = new int*[size];
+		for (int i = 0; i < size; i++)
+			link_matrix[i] = new int[size];
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+			{
+				link_matrix[i][j] = 0;
+			}
+		}
+		////////////////////////////////////////// CITY MATRIX //////////////////////////////////////////////
+		cities = new string[size];
+		for (int i = 0; i < size; i++)
+			cities[i] = " ";
+		///////////////////////////////////////// CARS MATRIX //////////////////////////////////////////////
+		cars = new double[size];
+		for (int i = 0; i < size; i++)
+		{
+			cars[i] = 0;
+		}
+
+		Take_input(x);
+		path_num = new double*[hashsize];
+		for (int i = 0; i < hashsize; i++)
+			path_num[i] = new double[hashsize];
+		for (int i = 0; i < hashsize;i++)
+		for (int j = 0; j < hashsize; j++)
+			path_num[i][j] = 0;
+		path = new string*[hashsize];
+		for (int i = 0; i < hashsize; i++)
+			path[i] = new string[hashsize];
+		for (int i = 0; i < hashsize; i++)
+		for (int j = 0; j < hashsize; j++)
+			path[i][j] = "";
+
+		Initializer();
+		
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	bool check(int count, string x)
+	{
+		bool check = false;
+		count = count + 1;
+		for (int i = 0; i < count; i++)
+		{
+			if (cities[i] == x)
+			{
+				return false;
+				break;
+			}
+			else
+				check = true;
+		}
+		return check;
+	}
+	void assigning_numbers(int &count, int size, string a, string b)
+	{
+		bool check_a = false;
+		bool check_b = false;
+		check_a = check(count, a);
+		if (check_a == true)
+		{
+			cities[count] = a;
+			count++;
+		}
+
+		check_b = check(count, b);
+		if (check_b == true)
+		{
+			cities[count] = b;
+			count++;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void print_cities()
+	{
+		cout << "*************************** CITIES HAVE BEEN ASSIGNED NUMBERS ********************************" << endl;
+		for (int i = 0; i < size; i++)
+			cout << cities[i] << "= City " << i << endl;
+		cout << "**********************************************************************************************" << endl;
+	}
+	void Take_input(string filename)
+	{
+		ifstream inn;
+		inn.open(filename);
+		ofstream out;
+		out.open("tempfile2.txt");
+		string first, second;
+		double distance, cost;
+		inn >> size;
+		while (!inn.eof())
+		{
+			hashsize++;
+			inn >> first >> second >> distance >> cost;
+			assigning_numbers(inc, size, first, second);
+			out << first << " " << second << " " << distance << " " << cost << endl;
+		}
+		cout << endl;
+		inn.close();
+		out.close();
+		assigning_values();
+	}
+	void Display_file_data(string filename)
+	{
+		ifstream in;
+		in.open(filename);
+		string first, second;
+		double distance, cost;
+		in >> size;
+		while (!in.eof())
+		{
+			in >> first >> second >> distance >> cost;
+			cout << "(" << first << "," << second << ") " << "distance " << distance << " km and cost/passenger is " << cost << " for bus service" << endl;
+		}
+		cout << endl;
+		in.close();
+	}
+		
+	//////////////////////////////////////////////////////// DATA ASSIGNING /////////////////////////////////////////////////
+	void addvertex(int a, int b, double distance, double cost)
+	{
+		cost_matrix[a][b] = cost;
+		cost_matrix[b][a] = cost;
+		distance_matrix[a][b] = distance;
+		distance_matrix[b][a] = distance;
+		link_matrix[a][b] = 1;
+		link_matrix[b][a] = 1;
+	}
+
+	int set_matrix_enteries(string x, int &a, int size)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (cities[i] == x)
+			{
+				a = i;
+				break;
+			}
+		}
+		return 0;
+	}
+
+	void assigning_values()
+	{
+		int a = 0; int b = 0;
+		ifstream inn;
+		inn.open("tempfile2.txt");
+		string first, second;
+		double distance, cost;
+		while (!inn.eof())
+		{
+			inn >> first >> second >> distance >> cost;
+			set_matrix_enteries(first, a, size);
+			set_matrix_enteries(second, b, size);
+			addvertex(a, b, distance, cost);
+		}
+	}
+	//////////////////////////////////////////////// DISPLAY MATRICES ////////////////////////////////////////////////////////
+	template<class DT>
+	void display_2p_matrix(DT *arr[], int size)
+	{
+		cout << "   ";
+		for (int i = 0; i < size; i++)
+			cout << i << "|" << "  ";
+		cout << endl;
+		for (int i = 0; i < size; i++)
+		{
+			cout << i << "|" << " ";
+			for (int j = 0; j < size; j++)
+			{
+				cout << arr[i][j] << "   ";
+			}
+			cout << endl;
+		}
+	}
+
+	int give_index(string city, int &x)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (cities[i] == city)
+				x = i;
+		}
+		return x;
+
+	}
+	////////////////////////////////////////// SHORTEST DISTANCE BETWEEN POINTS //////////////////////////////////////////
+	int find_city( string x, int &num)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (cities[i] == x)
+			{
+				num = i;
+				break;
+			}
+		}
+		return num;
+	}
+	int findminvertex(double *distance, bool *visited, int n)
+	{
+		int minvertex = -1;
+		for (int i = 0; i < n; i++)
+		{
+			if (!visited[i] && (minvertex == -1 || distance[i] < distance[minvertex]))
+				minvertex = i;
+		}
+		return minvertex;
+	}
+	bool check_cars(string x)
+	{
+		int num=0;
+		find_city(x,num);
+		cars[num]++;
+		if (cars[num] > 5)
+			return false;
+
+			return true;
+	}
+	int printpath(int parent[], int j,double dist[], int x,string &spath)
+	{
+		if (parent[j] == -1)
+			return 0;
+
+		printpath(parent, parent[j],dist, x,spath);
+		spath = spath + cities[j]+"->";
+		return j;
+	}
+	int printsolution(double dist[], int parent[],int x)
+	{
+		string temp = cities[x] + "->";
+		string spath;
+		spath = temp;
+		for (int i = 0; i < size; i++)
+		{
+			printpath(parent, i,dist,x,spath);
+			path[x][i] = spath;
+			cout << spath;
+			path_num[x][i] = dist[i];
+			cout << path_num[x][i] << "km" << endl;
+			spath = temp;
+		}
+		return 0;
+	}
+
+	void Initializer()
+	{
+		clear_memory();
+		for (int i = 0; i < size; i++)
+			ShortestPath(distance_matrix, i, "0");
+	}
+
+	void User_choice(string choice)
+	{
+		int runtimep = 0;
+		int runtimem = 0;
+		cout << endl;
+		if (choice == "3")
+		{
+			cout << "************************** Shortest Paths ************************************************" << endl;
+			if (runtimep < 1)
+			{
+				clear_memory();
+				for (int i = 0; i < size; i++)
+					ShortestPath(distance_matrix, i, choice);
+				runtimep++;
+			}
+			else
+				cout << "************************** ALL SHORTEST PATHS ALREADY DISPLAYED ****************************" << endl;
+			
+		}
+		else if (choice == "4")
+		{
+			if (runtimem < 1)
+			{
+				cout << "************************** Minimum Number of Hops ****************************************" << endl;
+				clear_memory();
+				for (int i = 0; i < size; i++)
+					ShortestPath(link_matrix, i, choice);
+				runtimem++;
+			}
+			else
+				cout << "*************************** ALL MINIMUM HOPS ALREADY DISPLAYED ****************************" << endl;
+		}
+		else if (choice == "6")
+		{
+			cout << "**************************Shortest Path With Respect To Cost **************************" << endl;
+			clear_memory();
+			for (int i = 0; i < size; i++)
+			ShortestPath(cost_matrix, i, choice);
+			runtimem++;
+		}
+		cout << "*********************************************************************************************" << endl;
+	}
+	template<class DT>
+	void ShortestPath(DT **arr,int x,string choice)
+	{
+		double *distance = new double[size];
+		bool *visited = new bool[size];
+		int *parent = new int[size];
+
+		for (int i = 0; i < size; i++)
+		{
+			distance[i] = INT_MAX;
+			visited[i] = false;
+		}
+		distance[x] = 0;
+		parent[x] = -1;
+		for (int i = 0; i < size; i++)
+		{
+			int minvertex = findminvertex(distance, visited, size);
+			visited[minvertex] = true;
+			for (int j = 0; j < size; j++)
+			{
+				if (arr[minvertex][j] != 0 && !visited[j])
+				{
+					double dist = distance[minvertex] + arr[minvertex][j];
+					if (dist < distance[j])
+					{
+						distance[j] = dist;
+						parent[j] = minvertex;
+					}
+				}
+			}
+		}
+		
+		if (choice == "3")
+		cout << "******************** DISPLAYING SHORTEST PATHS OF(" << cities[x] << ") WITH THE OTHER CITIES ****************************" << endl;
+		else if (choice == "4")
+		cout << "******************** DISPLAYING MINIMUM NUMBER OF HOPS OF(" << cities[x] << ") WITH THE OTHER CITIES ****************************" << endl;
+		printsolution(distance, parent,x);
+		cout << "******************************* SHORTEST PATHS DISPLAYED ***********************************************\n\n" << endl;
+	}
+	void clear_memory()
+	{
+		for (int i = 0; i < hashsize; i++)
+		{
+			for (int j = 0; j < hashsize; j++)
+			{
+				path[i][j] = " ";
+				path_num[i][j] = 0;
+			}
+		}
+	}
+	void display_matrix(int a, int  b)
+	{
+		for (int i = 0; i < hashsize;i++)
+		for (int j = 0; j < hashsize; j++)
+		{
+			if (path_num[i][j]!=0)
+			cout << cities[i] << "->" << cities[j] << "= " << path[i][j] << path_num[i][j] << endl;
+		}
+	}
+	double fare_calculation(int a,int b,double basic)
+	{
+		cout << "********************** CALCULATING FARE ********************************\n";
+		double fare = 0;
+		cout << "Shortest Path= " << path[a][b] <<" "<<path_num[a][b]<< endl;
+		fare = basic*path_num[a][b];
+		cout << "FARE For this ride= " << fare << endl;
+		return fare;	
+		cout << "*********************** FARE CALCULATION COMPLETE ************************\n\n";
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+};
+#endif
