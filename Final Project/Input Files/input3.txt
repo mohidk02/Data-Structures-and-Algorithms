@@ -1,0 +1,12 @@
+6
+Lahore Faisalabad 20 2
+Lahore Multan 10 3
+Lahore Karachi 50 10
+Faisalabad Islamabad 15 13
+Faisalabad Karachi 23 25
+Multan Faisalabad 22 24
+Multan Sheikhupura 21 27
+Multan Karachi 30 31
+Sheikhupura Karachi 16 17
+Sheikhupura Lahore 28 29
+Karachi Faisalabad 5 6
