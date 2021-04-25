@@ -1,0 +1,104 @@
+#include<iostream>
+using namespace std;
+template<class KeyType>
+class Stack
+{ 
+	private:
+	KeyType *arr;
+	int top;			// top is the index of last element
+	int size;			// Size of Stack
+public:
+// constructor , creates an empty stack
+Stack( int s)
+{
+	arr=new KeyType[s];
+    size=s;
+	top=-1;
+}
+// returns true if Stack is full, otherwise return false
+bool IsFull()
+{
+if(top==size-1)
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+//If number of elements in the Stack is zero return true, otherwise return false
+bool IsEmpty()
+{
+if(top==-1)
+	return true;
+else
+	return false;
+}
+
+// If Stack is not full, insert item into the Stack. Must be an O(1) operation
+void Push(const KeyType item)
+{
+top++;
+arr[top]=item;
+}
+
+// If Stack is empty return 0 or NULL;
+// else return appropriate item from the Stack. Must be an O(1) operation
+KeyType Pop()
+{
+	KeyType item;
+	if(IsEmpty())
+	{
+	return 0;
+	}
+	else
+	{
+		item= arr[top];
+		top--;
+		return item;
+	}
+}
+};
+int main()
+{   	
+	Stack<double> *st= new Stack<double>(1000);
+	double result=0;
+    char a[7]={'2','3','7','*','+','9','-'};
+	for ( int i=0;i<7;i++)
+	{
+	if (a[i]=='+')
+	{
+        cout<<"Plus Called\n";
+        result=(st->Pop())+(st->Pop()-'0');
+        cout<<"Result= "<<result<<endl;
+		st->Push(result);		
+	}
+	else if (a[i]=='*')
+	{
+		cout<<"Multiply Called\n";
+		result=(st->Pop()-'0')*(st->Pop()-'0');
+        cout<<"Result= "<<result<<endl;
+		st->Push(result);
+	}
+	else if (a[i]=='-')
+	{
+        cout<<"Subtraction Called\n";
+        result=(st->Pop()-'0')-(st->Pop());
+        cout<<"Result= "<<-result<<endl;
+		st->Push(result);
+		
+	}
+	else if (a[i]=='/')
+	{
+        cout<<"Division Called\n";
+		result=(st->Pop()-'0')/(st->Pop()-'0');
+		st->Push(result);
+	}
+	else
+	{
+		st->Push(a[i]);
+	}
+	}
+	return 0;
+}
