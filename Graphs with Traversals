@@ -1,0 +1,173 @@
+#include<iostream>
+#include<stack>
+#include<queue>
+using namespace std;
+
+class Graph
+{
+public:
+	//part1: constructor initializes adjacency matrix
+	Graph(int numVertex)
+	{
+		numVertices=numVertex;
+		adj_matrix=new int *[numVertex];
+		for(int i=0;i<numVertex;i++)
+		{
+			adj_matrix[i]=new int [numVertices];
+			for(int j=0;j<numVertex;j++)
+		{
+			adj_matrix[i][j]=0;
+		}
+	}
+	}
+	//part2: returns the number of vertices in the graph
+	int GetNumVertices()
+	{
+
+		return numVertices;
+	}
+//part3: returns the number of edges in the graph
+	int numberOfEdges()
+	{
+		int edges=0;
+		for(int i=0;i<numVertices;i++)
+		{
+			for (int j=0;j<numVertices;j++)
+			{
+				if(adj_matrix[i][j]==1)
+					edges++;
+			}
+	}
+		edges=edges/2;
+		return edges++;
+}
+//part4: inserts edge going from one vertex to another
+	void insertEdge(int frmVertex, int toVertex)
+	{
+		adj_matrix[frmVertex][toVertex]=1;
+	}
+//part5: removes edge going from one vertex to another
+	void removeEdge(int frmVertex, int toVertex)
+	{
+		adj_matrix[frmVertex][toVertex]=0;
+	}
+//part6: returns the degree of the node passed
+	int degree(int vertex)
+	{
+	int count=0;
+	for (int i=0;i<numVertices;i++)
+	{
+		if (adj_matrix[vertex][i]==1)
+			count++;
+	}
+	return count;
+	}
+	
+	//part7: outputs the order in which vertices are visited during DFS
+	//Starting from node s.
+	void depthfirstSearch(int s)
+	{
+	 stack<int> *st=new stack<int>();
+	 bool *visited=new bool[numVertices];
+	 int size, temp;
+	 int a=0;
+	 size=GetNumVertices();
+	 for(int i=0;i<size;i++)
+	 {
+	 visited[i]=false;
+	 }
+
+	 visited[s]=true;
+	 st->push(s);
+	 temp=st->top();
+	 cout<<temp<<" ";
+
+	 for(int i=0;i<size;i++)
+	 {
+	
+	 for(int j=0;j<size;j++)
+	 {
+		 if((adj_matrix[i][j]==1)&&(visited[j]==false))
+		 {
+			 st->push(j);
+			 visited[j]=true;
+			 cout<<j<<" ";
+			 break;
+		 }
+	 }
+	 s=st->top();
+	 st->pop();
+	 }
+	}
+
+//part8: outputs the order in which vertices are visited during BFS
+	//Starting from node s.
+	void breadthfirstSearch(int s)
+	{
+	queue <int>*q=new queue <int>();
+		bool *visited = new bool [numVertices];
+	for (int i=0; i<numVertices; i++)
+	visited [i]=false;
+	visited [s]=true;
+	q-> push(s);
+	while (!q->empty())
+	{
+		s=q-> front ();
+		q->pop();
+		cout<<s<<" ";
+		
+		for (int i=0 ;i <numVertices; i++)
+		{
+			if (adj_matrix[s][i]==1)
+			{
+				if(visited[i]==false)
+				{
+					visited[i]=true;
+					q->push(i);
+				}
+			}
+	}
+	}
+	}
+
+
+private:
+	int **adj_matrix;
+	int numVertices;
+
+};
+
+int main()
+{
+	Graph *g; //creating an object of graph with 5 vertices
+	g=new Graph(5);
+
+	//inserting edges in the graph
+	g->insertEdge(0,1);
+g->insertEdge(0,4);
+g->insertEdge(1,0);
+g->insertEdge(1,2);
+g->insertEdge(1,3);
+g->insertEdge(1,4);
+g->insertEdge(2,1);
+g->insertEdge(2,3);
+g->insertEdge(3,1);
+g->insertEdge(3,2);
+g->insertEdge(3,4);
+g->insertEdge(4,0);
+g->insertEdge(4,1);
+g->insertEdge(4,3);
+
+	//display total number of edges
+	cout<<"Number of edges are "<<g->numberOfEdges()<<endl;
+
+//display degree of vertex number 4
+cout<<"Degree of vertex "<<g->degree(4)<<endl;
+
+cout<<"\nOutput for Depth first search starting from vertex 0 "<<endl;
+g->depthfirstSearch(0);
+cout<<"\nOutput for Breadth first search starting from vertex 0 "<<endl;
+g->breadthfirstSearch(0);
+cout<<endl;
+	return 0;
+}
