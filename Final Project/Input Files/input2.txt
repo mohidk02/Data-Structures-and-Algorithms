@@ -8,4 +8,4 @@ Multan	Sheikhupura	15	6
 Karachi Lahore          21      25
 Karachi Faisalabad      50      51
 Sheikhupura Faisalabad  60      86
-Sheikhupura  Lahore      69      72
+Sheikhupura  Lahore      69      72 
