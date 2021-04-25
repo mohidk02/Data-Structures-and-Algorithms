@@ -1,0 +1,210 @@
+#include <iostream>
+using namespace std;
+template<class DT>
+class BNode
+{
+public:
+	BNode()
+	{
+	data=0;
+	leftchild=NULL;
+	rightchild=NULL;
+	}
+	void setLeftChild(BNode<DT>* n)
+	{
+		leftchild=n;
+	}
+	BNode<DT>* getLeftChild()
+	{
+		return leftchild;
+	}
+	void setRightChild(BNode<DT>* n)
+	{
+		rightchild=n;
+	}
+	BNode<DT>* getRightChild()
+	{
+		return rightchild;
+	}
+	void setData(DT pdate)
+	{
+		data= pdate;
+	}
+	DT getData()
+	{
+	return data;
+	}
+private:
+	DT data;
+	BNode* leftchild;
+	BNode* rightchild;
+};
+template<class DT>
+class BinaryTree
+{
+private:
+	BNode <DT> *root;
+	int depth=0;
+public:
+	//part1: constructor
+	BinaryTree ()
+	{
+	root=NULL;
+	}
+	//part 2:
+	//Build the binary tree from the data given in the array.  
+	//If a node doesn't exist the array element is 0
+	void BuildTree(DT *Arr, int Size)
+	{
+		BNode <DT> **p = new BNode <DT> *[Size];
+	   for ( int i=0;i<Size;i++)
+	   {
+	   if (Arr[i]==0)
+	   {
+	   p[i]=NULL;
+	   }
+	   else
+	   {
+		   p[i]=new BNode<DT> ();
+		   p[i]->setData(Arr[i]);
+	   }
+	   if(i/2>=1)
+	   {
+	   if(i%2==0)
+	   {
+	   p[i/2]->setLeftChild(p[i]);
+	   }
+	   else
+	   {   p[i/2]->setRightChild(p[i]);}
+	   }
+	   }
+	   root=p[1];
+	}
+	//part3: post order traversal (recursive)
+	//you may call any other function with parameters which might be needed
+	void PostOrder()
+	{
+
+	PostOrder(root);
+
+    }
+void PostOrder(BNode<DT>* d)
+{
+	if(d==NULL)
+			return;
+
+	PostOrder(d->getLeftChild());
+	PostOrder(d->getRightChild());
+	depth++;
+	cout<< d->getData()<<" ";
+}
+
+	//part4: pre order traversal (recursive)
+	// you may call any other function with parameters which might be needed
+	void PreOrder()
+	{
+		PreOrder(root);
+	}
+	void PreOrder(BNode<DT> *d)
+	{
+	if (d==NULL)
+	return;
+
+	cout<<d->getData()<<" ";
+	PreOrder(d->getLeftChild());
+	PreOrder(d->getRightChild());
+	}
+	//part5: in order traversal (recursive)
+	// you may call any other function with parameters which might be needed
+	void InOrder(BNode<DT> *d)
+	{
+	if(d==NULL)
+		return;
+
+	InOrder(d->getLeftChild());
+	cout<<d->getData()<<" ";
+	InOrder(d->getRightChild());
+	}
+	void InOrder()
+	{
+		InOrder(root);
+	}
+	void calculateDepth()
+	{
+		//calculateDepth(root); for function 2
+		cout<<"Depth= "<<calculateDepth(root)<<endl;
+	}
+	int calculateDepth(BNode <DT> *d)
+	{
+         //let this be function 1
+			if(d==NULL)
+		return 0;
+	   BNode<DT> *temp = d;
+
+	   int left=calculateDepth(temp->getLeftChild());
+	   int right=calculateDepth(temp->getRightChild())  ;
+
+		if(left>right)
+		return (left+1);
+		else
+		{
+			return right+1;
+		}
+	
+	}
+		//The function below also works . let it be function 2 . change return type to void to use this.
+	//   BNode<DT> *temp=d;
+	//   int left,right;
+	//   left=right=0;
+	// if (d==NULL)
+	// 	return;
+    // while(temp!=NULL)
+	// {
+	// 	temp=temp->getLeftChild();
+    //     left++;
+	// } 
+	// temp=d;
+	// while(temp!=NULL)
+	// {
+	// 	temp=temp->getRightChild();
+    //     right++;
+	// } 
+	// if(left>right)
+	// depth=left;
+	// else
+	// {
+	// 	depth=right;
+	// }
+	// cout<<"\nDepth of Tree= "<<depth<<endl;
+	
+	// }
+
+
+};
+int main()
+{
+	//creating an object of binary tree
+	BinaryTree<int> *BT=new BinaryTree<int>();
+
+    //array to pass, 0 means no node exists
+	int Arr[15]={0,1,2,3,4,5,6,7,8,9,10,0,12,13,14};
+	
+	BT->BuildTree(Arr,15); //building the tree from the array
+	cout<<"***************************************************"<<endl;
+	
+	cout<<"Preorder Traversal(Recursive) is: "<<endl;
+	BT->PreOrder();
+	cout<<"\n***************************************************"<<endl;
+	cout<<"Post order Traversal(Recursive) is: "<<endl;
+	BT->PostOrder();
+	cout<<"\n***************************************************"<<endl;
+       cout<<"Inorder Traversal(Recursive) is: "<<endl;
+	BT->InOrder();
+	cout<<"\n***************************************************"<<endl;
+	cout<<"Height of the Binary Tree is: "<<endl;
+	BT->calculateDepth();
+	cout<<"***************************************************"<<endl;
+
+
+	return 0;
+}
