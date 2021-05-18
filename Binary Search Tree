@@ -1,0 +1,112 @@
+#include<iostream>
+using namespace std;
+static string path="root";
+class Node
+{
+    public:
+    int key;
+    Node *left,*right;
+
+    Node()
+    {
+        key=0;
+        left=NULL;
+        right=NULL;
+    }
+    Node(int value)
+    {
+        key=value;
+        left=right=NULL;
+    }
+
+    Node* insert(Node *root,int value)
+    {
+        if(!root)
+        return new Node(value);
+
+        if(value<root->key)
+        root->left= insert(root->left,value);
+        else
+        {
+            root->right=insert(root->right,value);
+        }
+        return root;
+    }
+    void inorder(Node *n)
+    {
+        if(n==NULL)
+        return;
+
+        inorder(n->left);
+        cout<<n->key<<" ";
+        inorder(n->right);
+    }
+    void preorder(Node *n)
+    {
+        if(n==NULL)
+        return;
+
+        cout<<n->key<<" ";
+        preorder(n->left);
+        preorder(n->right);
+    }
+    void postorder(Node *n)
+    {
+        if(n==NULL)
+        return;
+
+        
+        preorder(n->left);
+        preorder(n->right);
+        cout<<n->key<<" ";
+    }
+    void search(Node *n,int value,int index)
+    {
+        if(n==NULL)
+        return ;
+
+        if(n->key==value)
+        cout<<"Entry is at Position:"<<index<<endl;
+        
+        index++;
+        search(n->left,value,index);
+        search(n->right,value,index);
+    }
+    void print_path(Node *n,int value)
+    {
+        if(n->key==value)
+        return;
+
+        if(value<n->key)
+        {
+            path=path+"->left";
+            print_path(n->left,value);
+        }
+        else if(value>n->key)
+        {
+            path=path+"->right";
+            print_path(n->right,value);
+        }
+    }
+};
+
+
+int main()
+{
+    Node n,*root=NULL;
+    root=n.insert(root,50);
+    n.insert(root,30);
+    n.insert(root,40);
+    n.insert(root,60);
+    n.insert(root,70);
+    n.inorder(root);
+    cout<<endl;
+    n.preorder(root);
+    cout<<endl;
+    n.postorder(root);
+    cout<<endl;
+    int index=1;
+    n.print_path(root,50);
+    cout<<"Path="<<path<<endl;
+    return 0;
+}
