@@ -1,0 +1,66 @@
+#include <iostream>
+using namespace std;
+struct Node
+{
+int key;
+Node *next;
+Node *head=NULL;
+
+int _delete(int val)
+{
+    if (head->key==val)
+    {
+        head=head->next;
+        return 0;
+    }
+Node *temp1=head;
+Node *temp2=temp1;
+while(temp1->key!=val)
+{
+    temp2=temp1;
+    temp1=temp1->next;
+}
+temp2->next=temp1->next;
+delete temp1;
+}
+void insert(int val)
+{
+if (head==NULL)
+{
+    head=new Node();
+    head->key=val;
+}
+else
+{
+    Node *newnode = new Node();
+    newnode->key = val;
+    Node *temp = head;
+    while(temp->next!=NULL)
+    {
+        temp=temp->next;
+    }
+    temp->next=newnode;
+}
+}
+void print()
+{
+    Node *temp=head;
+    while(temp!=NULL)
+    {
+        cout<<temp->key<<" ";
+        temp=temp->next;
+    }
+}
+};
+int main()
+{
+    Node obj;
+    obj.insert(3);
+    obj.insert(4);
+    obj.insert(5);
+    obj.print();
+    cout<<"\n";
+    obj._delete(3);
+    obj.print();
+    return 0;
+}
