@@ -6,6 +6,57 @@ int key;
 Node *next;
 Node *head=NULL;
 
+void find_element(Node *n,int val)
+{
+    n=head;
+    while(n->key!=val)
+    n=n->next;
+    cout<<n<<" ";
+}
+
+void swap(int x, int y)
+{ //copied from geek for geeks because mine was exactly the same
+   if (x == y)
+        return;
+
+    Node *prevX = NULL, *currX = head;
+    while (currX && currX->key != x) {
+        prevX = currX;
+        currX = currX->next;
+    }
+ 
+    
+    Node *prevY = NULL, *currY = head;
+    while (currY && currY->key != y) {
+        prevY = currY;
+        currY = currY->next;
+    }
+ 
+    
+    if (currX == NULL || currY == NULL)
+        return;
+ 
+
+    if (prevX != NULL)
+        prevX->next = currY;
+    else 
+        head = currY;
+ 
+    
+    if (prevY != NULL)
+        prevY->next = currX;
+    else 
+        head = currX;
+ 
+   
+    Node* temp = currY->next;
+    currY->next = currX->next;
+    currX->next = temp;
+
+
+    
+}
+
 int _delete(int val)
 {
     if (head->key==val)
@@ -50,6 +101,18 @@ void print()
         cout<<temp->key<<" ";
         temp=temp->next;
     }
+    cout<<endl;
+}
+int calculate_length()
+{
+    static Node *temp=head;
+    static int length=0;
+    if(temp==NULL)
+    return length;
+    length++;
+    temp=temp->next;
+    calculate_length();
+
 }
 };
 int main()
@@ -58,9 +121,12 @@ int main()
     obj.insert(3);
     obj.insert(4);
     obj.insert(5);
-    obj.print();
+   obj.print();
     cout<<"\n";
     obj._delete(3);
-    obj.print();
+  obj.print();
+    obj.swap(4,5);
+  obj.print();
+  cout<<"Length of Linked List="<<obj.calculate_length();
     return 0;
 }
