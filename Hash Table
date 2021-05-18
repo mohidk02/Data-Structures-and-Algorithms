@@ -1,0 +1,18 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+    int arr[]={1,2,4,5,6}; //input array from 1 to n with just 1 missing number
+    int n=sizeof(arr)/sizeof(arr[0]) +1; //size of array greater than array by 1
+    int *hash=new int[n+1]; //create hashtable to store entries (0th index is ignored)
+    for (int i=0;i<sizeof(arr)/sizeof(arr[0]);i++)
+    {
+        hash[arr[i]%(n+1)]=arr[i];  //hash by size+1 so that each entry gets specific index 
+    }
+    for(int i=1;i<n+1;i++)  // running loop from 1 because 0th index is ignored
+    {
+        if(!hash[i])   //if entry is null then that index number is missing number
+        cout<<"Missing Number="<<i<<endl;
+    }
+
+}
