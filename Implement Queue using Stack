@@ -1,0 +1,62 @@
+#include<iostream>
+#include<stack>
+using namespace std;
+struct queue
+{
+stack<int> s1,s2;
+int size=0;
+
+void push(int val)
+{
+    size++;
+    while(!s1.empty())
+    {
+        s2.push(s1.top());
+        s1.pop();
+    }
+    s1.push(val);
+    while(!s2.empty())
+    {
+        s1.push(s2.top());
+       s2.pop();
+    }
+}
+    int pop()
+    {
+        int x=s1.top();
+        s1.pop();
+        return x;
+    }
+    int top()
+    {
+        int x=s1.top();
+        return x;
+    }
+    int Size()
+    {
+        return size;
+    }
+    void print()
+    {
+        while(!s1.empty())
+        {
+            int x=s1.top();
+            cout<<x<<" ";
+            s1.pop();
+        }
+    }
+};
+int main()
+{
+    queue q;
+    q.push(1);
+    q.push(2);
+    q.push(3);
+    cout<<"Size= "<<q.Size()<<endl;
+    cout<<q.top()<<endl;
+    cout<<q.pop()<<endl;
+    cout<<"Size= "<<q.Size()<<endl;
+    q.print();
+    cout<<"Size= "<<q.Size()<<endl;
+    return 0;
+}
