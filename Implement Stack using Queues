@@ -3,9 +3,13 @@
 using namespace std;
 struct stack
 {
+    public:
     queue<int> q1,q2;
+    int size=0;
+    
     void push(int val)
     {
+        size++;
         while (!q1.empty())
         {
             q2.push(q1.front());
@@ -20,6 +24,7 @@ struct stack
     }
     int pop()
     {
+        size--;
         int x=q1.front();
         q1.pop();
         return x;
@@ -31,6 +36,7 @@ struct stack
             int x=q1.front();
             cout<<x<<" ";
             q1.pop();
+            size--;
         }
         cout<<endl;
     }
@@ -39,6 +45,10 @@ struct stack
         int x=q1.front();
         return x;
     }
+    int stack_size()
+    {
+        return size;
+    }
 };
 int main()
 {
@@ -46,9 +56,12 @@ int main()
     s.push(1);
     s.push(2);
     s.push(3);
+    cout<<"Size of Stack="<<s.stack_size()<<endl;
     cout<<s.top()<<" ";
     s.pop();
+    cout<<"Size of Stack="<<s.stack_size()<<endl;
     s.print();
+    cout<<"Size of Stack="<<s.stack_size()<<endl;
     cout<<endl;
     return 0;
 }
