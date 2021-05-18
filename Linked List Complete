@@ -1,0 +1,166 @@
+#include<iostream>
+using namespace std;
+struct Node
+{
+    public:
+    int key;
+    Node *next;
+    Node()
+    {
+        key=0;
+        next=NULL;
+    }
+    Node (int val)
+    {
+        key=val;
+        next=NULL;
+    }
+
+    void insert(Node *n,int val)
+    {
+        Node *new_node=new Node(val);
+        Node *temp=n;
+        while(temp->next!=NULL)
+        {
+            temp=temp->next;
+        }
+        temp->next=new_node;
+        
+    }
+    void print(Node *n)
+    {
+        if(n==NULL)
+        {
+            cout<<"Empty List"<<endl;
+            return;
+        }
+        Node *temp=n;
+        while(temp!=NULL)
+        {
+            cout<<temp->key<<" ";
+            temp=temp->next;
+        }
+        cout<<endl;
+    }
+    void midpoint(Node *n)
+    {
+        Node *temp1,*temp2;
+        temp1=n;
+        temp2=n;
+        while(temp2!=NULL && temp2->next!=NULL)
+        {
+            temp1=temp1->next;
+            temp2=temp2->next->next;
+        }
+        cout<<"MidPoint="<<temp1->key<<endl;
+    }
+    void delete_key(Node*n,int val)
+    {
+        Node *prev,*curr;
+        prev=n;
+        curr=n->next;
+        if(prev->key==val)
+        {
+            free(prev);
+            return;
+        }
+        while(curr!=NULL)
+        {   
+        if(curr->key==val)
+        {
+            prev->next=curr->next;
+            free(curr);
+            return;
+        }
+        else
+        {
+            curr=curr->next;
+            prev=prev->next;
+        }
+
+        }       
+    }
+    void deletelist(Node **n)
+    {
+        Node *curr=*n;
+        Node *next=NULL;
+        while(curr!=NULL)
+        {
+            next=curr->next;
+            free(curr);
+            curr=next; 
+        }
+        *n=NULL;
+        
+        return;
+    }
+    int lengthiterative(Node *n)
+    {
+        Node *temp =n;
+        int length=0;
+        while (temp!=NULL)
+        {
+            length++;
+            temp=temp->next;
+        }
+        return length;
+    }
+    int lengthrecursive(Node *n)
+    {
+        static int length=0;
+        if(n==NULL)
+        {
+        int x=length;
+        length=0;
+        return x;
+        }
+
+        length++;
+        lengthrecursive(n->next);
+    }
+    void reverse(Node **n)
+    {
+        Node *curr=*n;
+        Node* prev=NULL,*next=NULL;
+        while(curr!=NULL)
+        {
+            next=curr->next;
+            curr->next=prev;
+            prev=curr;
+            curr=next;
+        }
+
+        *n=prev;
+    }
+};
+int main()
+{
+    Node  *n=new Node(1);
+    n->insert(n,2);
+    n->insert(n,3);
+    cout<<"Intial List\n";
+    n->print(n);
+    cout<<"Calculating Midpoint\n";
+    n->midpoint(n);
+    n->insert(n,4);
+    n->insert(n,5);
+    cout<<"After Inserting 2 indexes\n";
+    n->print(n);
+    cout<<"New Midpint\n";
+    n->midpoint(n);
+    cout<<"Iterative Length="<<n->lengthiterative(n)<<endl;
+    cout<<"Recursive Length="<<n->lengthrecursive(n)<<endl;
+    n->delete_key(n,4);
+    cout<<"After Deletion \n";
+    n->print(n);
+    cout<<"New Lengths\n";
+    cout<<"Iterative Length="<<n->lengthiterative(n)<<endl;
+    cout<<"Recursive Length="<<n->lengthrecursive(n)<<endl;
+    cout<<"Reversing List\n";
+    n->reverse(&n);
+    n->print(n);
+    cout<<"Deleting List\n";
+    n->deletelist(&n);
+    n->print(n);
+    return 0;
+}
