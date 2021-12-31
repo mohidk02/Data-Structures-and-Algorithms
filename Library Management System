@@ -1,0 +1,450 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <queue>
+#include <stack>
+#include <map>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+class book{
+    public:
+    string name;
+    int in_stock;
+    queue <long int> students;
+    book(){};
+    book(string book_name,int stock)
+    {
+        name = book_name;
+        in_stock = stock;
+    }
+    void book_issued(long int cnic)
+    {
+        students.push(cnic);
+        in_stock--;
+    }
+    void book_returned(long int cnic)
+    {
+        if(in_stock == 0)
+        {
+            cout<<"This Book is not in stock\n";
+            return;
+        }
+        in_stock++;
+        queue <long int> *remove = new queue <long int> ();
+        while(!students.empty())
+        {
+            if(students.front()!=cnic)
+            {
+                remove->push(students.front());
+            }
+            students.pop();
+        }
+        students = *remove;
+        remove->empty();
+        delete remove; 
+        
+    }
+    void student_has_book(long int cnic)
+    {
+        queue <long int> *remove = new queue <long int> ();
+        while(!students.empty())
+        {
+            if(students.front() == cnic)
+            {
+                cout<<name<<endl;
+            }
+            students.pop();
+        }
+        students = *remove;
+        remove->empty();
+        delete remove; 
+    }
+        void book_has_students()
+    {
+        if(students.empty())
+        {
+            cout<<"Book not issued to any student\n";
+            return;
+        }
+        queue <long int> *remove = new queue <long int> ();
+        cout<<"Book Holder Student CNICs"<<endl;
+        while(!students.empty())
+        {
+
+            cout<<students.front()<<" "<<endl;
+            students.pop();
+        }
+        students = *remove;
+        remove->empty();
+        delete remove; 
+    }
+    
+};
+class student
+{
+    public:
+    long int cnic;
+    string name;
+    long int mobile_no;
+    string address;
+
+    student(){
+        cnic = 0;
+        name = "";
+        mobile_no = 0;
+        address = "";
+    }
+    // functions to store student information (getters)
+    void store_cnic(long int student_cnic)
+    {
+        cnic = student_cnic;
+    }
+    void store_name(string student_name)
+    {
+        name = student_name;
+    }
+    void store_mobile_no(long int student_mobile_no)
+    {
+        mobile_no = student_mobile_no;
+    }
+    void store_address(string student_address)
+    {
+        address = student_address;
+    }
+
+    // functions to get student information (getters) -- use cout with function call to get stored information 
+
+    long int get_cnic()
+    {
+        return cnic;
+    }
+    string get_name()
+    {
+        return name;
+    }
+    long int get_mobile_no()
+    {
+        return mobile_no;
+    }
+    string get_address()
+    {
+        return address;
+    }
+};
+class record_tree{
+    student entry; // to store student object in binary search tree
+    record_tree *left , *right;
+    public:
+    // defining functions of binary search tree
+    record_tree();
+    record_tree(student value);
+    record_tree *Insert(record_tree*,student entry);
+    void print(record_tree*);
+};
+// Binary search tree functions start from here
+    record_tree :: record_tree() : left(NULL),right(NULL){}
+    record_tree :: record_tree(student value)
+    {
+        entry = value;
+        left = right = NULL;
+    }
+    record_tree* record_tree ::Insert(record_tree* root, student entry)
+    {
+        if (!root)
+        {
+             return new record_tree(entry); // if no entry is present then make the first entry as node 
+        }
+    
+        if (entry.get_cnic() > root->entry.get_cnic())
+        {
+            root->right = Insert(root->right, entry); // student cnic value is taken as reference to binary search tree build value
+        }
+        else
+        {
+
+            root->left = Insert(root->left, entry); // following BST conventions
+        }
+    
+        return root;
+    }
+    void record_tree :: print(record_tree *root){
+        if (!root) {
+        return;
+    }
+    print(root->left);
+    cout << root->entry.get_cnic()<<" "<< root->entry.get_name()<<" "<< root->entry.get_mobile_no()<<" "<< root->entry.get_address()<<" " << endl;
+    print(root->right);
+    }
+// functions of binary search tree end here
+
+// Creating a map for delivery purpose
+    class Graph
+{
+public:
+	//part1: constructor initializes adjacency matrix
+	Graph(int numVertex)
+	{
+		numVertices=numVertex;
+		adj_matrix=new int *[numVertex];
+		for(int i=0;i<numVertex;i++)
+		{
+			adj_matrix[i]=new int [numVertices];
+			for(int j=0;j<numVertex;j++)
+		{
+			adj_matrix[i][j]=0;
+		}
+	}
+	}
+	//part2: returns the number of vertices in the graph
+	int GetNumVertices()
+	{
+
+		return numVertices;
+	}
+//part3: returns the number of edges in the graph
+	int numberOfEdges()
+	{
+		int edges=0;
+		for(int i=0;i<numVertices;i++)
+		{
+			for (int j=0;j<numVertices;j++)
+			{
+				if(adj_matrix[i][j]==1)
+					edges++;
+			}
+	}
+		edges=edges/2;
+		return edges++;
+}
+//part4: inserts edge going from one vertex to another
+	void insertEdge(int frmVertex, int toVertex)
+	{
+		adj_matrix[frmVertex][toVertex]=1;
+	}
+//part5: removes edge going from one vertex to another
+	void removeEdge(int frmVertex, int toVertex)
+	{
+		adj_matrix[frmVertex][toVertex]=0;
+	}
+//part6: returns the degree of the node passed
+	int degree(int vertex)
+	{
+	int count=0;
+	for (int i=0;i<numVertices;i++)
+	{
+		if (adj_matrix[vertex][i]==1)
+			count++;
+	}
+	return count;
+	}
+	
+	//part7: outputs the order in which vertices are visited during DFS
+	//Starting from node s.
+	void depthfirstSearch(int s)
+	{
+	 stack<int> *st=new stack<int>();
+	 bool *visited=new bool[numVertices];
+	 int size, temp;
+	 int a=0;
+	 size=GetNumVertices();
+	 for(int i=0;i<size;i++)
+	 {
+	 visited[i]=false;
+	 }
+
+	 visited[s]=true;
+	 st->push(s);
+	 temp=st->top();
+	 cout<<temp<<" ";
+
+	 for(int i=0;i<size;i++)
+	 {
+	
+	 for(int j=0;j<size;j++)
+	 {
+		 if((adj_matrix[i][j]==1)&&(visited[j]==false))
+		 {
+			 st->push(j);
+			 visited[j]=true;
+			 cout<<j<<" ";
+			 break;
+		 }
+	 }
+	 s=st->top();
+	 st->pop();
+	 }
+	}
+
+//part8: outputs the order in which vertices are visited during BFS
+	//Starting from node s.
+	void breadthfirstSearch(int s)
+	{
+	queue <int>*q=new queue <int>();
+		bool *visited = new bool [numVertices];
+	for (int i=0; i<numVertices; i++)
+	visited [i]=false;
+	visited [s]=true;
+	q-> push(s);
+	while (!q->empty())
+	{
+		s=q-> front ();
+		q->pop();
+		cout<<s<<" ";
+		
+		for (int i=0 ;i <numVertices; i++)
+		{
+			if (adj_matrix[s][i]==1)
+			{
+				if(visited[i]==false)
+				{
+					visited[i]=true;
+					q->push(i);
+				}
+			}
+	}
+	}
+	}
+
+
+private:
+	int **adj_matrix;
+	int numVertices;
+
+};
+//---------------------------------------------------
+// writing main below
+int main()
+{   
+    cout<<"---------------------------- Initiating System -------------------------\n";
+    // created variable to keep track of total enteries of students
+    int students_count = 0;
+
+    //created object and pointer of tree to store students in it
+    record_tree r ,*root = NULL;
+
+    //initializing variables to read data from file
+    ifstream myFile;
+    myFile.open("students.txt");
+
+    //created variables to read data from file , it can also be read directly from file into functions but we are keeping it simple
+    long int cnic;
+    string name;
+    long int mobile_no;
+    string address;    // reading till the end of the file 
+
+    string book_name;
+    int stock;
+    //intializing map 
+    cout<<"- Creating Graph\n";
+    Graph *g; //creating an object of graph with 5 vertices
+	g=new Graph(5);
+
+	//inserting edges in the graph
+	g->insertEdge(0,1);
+    g->insertEdge(0,4);
+    g->insertEdge(1,0);
+    g->insertEdge(1,2);
+    g->insertEdge(1,3);
+    g->insertEdge(1,4);
+    g->insertEdge(2,1);
+    g->insertEdge(2,3);
+    g->insertEdge(3,1);
+    g->insertEdge(3,2);
+    g->insertEdge(3,4);
+    g->insertEdge(4,0);
+    g->insertEdge(4,1);
+    g->insertEdge(4,3);
+
+    cout<<"- Graph Created\n";
+    //------------  map initialized ---------------------------
+    cout<<"- Reading Student Information\n";
+    while(!myFile.eof())
+    {
+        student s; //created a student object
+        myFile >> cnic >> name >> mobile_no >> address; //reading from file to variables
+        //storing data from file into student class
+        s.store_cnic(cnic); 
+        s.store_name(name);
+        s.store_mobile_no(mobile_no);
+        s.store_address(address);
+        if(students_count == 0)
+        root = r.Insert(root,s); //for first student we stored data into node
+        else
+        r.Insert(root,s); //for other enteries we are following the convention of binary search tree
+    }
+    cout<<"- Student Information Stored\n";
+    myFile.close();
+
+    //store Books 
+    map<string,book>books;
+    ifstream myFile2;
+    myFile2.open("books.txt");
+    cout<<"- Reading Books Information\n";
+    while(!myFile2.eof())
+    {
+        myFile2>>book_name>>stock;
+        book b(book_name,stock);
+        books[book_name] = b;
+    }
+    int choice = 0;
+    cout<<"- Stored Books Information\n";
+    cout <<"-------------------- Library Book Management System --------------------------\n";
+    cout <<"Press 1 To Display All Students Information\n";
+    cout <<"Press 2 To Collect Book From Student\n";
+    cout <<"Press 3 To issue a Book To Student\n";
+    cout <<"Press 4 To check Book Information\n";
+    cout <<"Press 5 to check Books Borrowed by a Student\n";
+    cout <<"Press 6 To get All Books Information\n";
+    cout <<"Press Enter -1 to exit\n";
+    cout <<"------------------------------------------------------------------------------\n";
+    while(choice != -1)
+    {
+        cout<<"Enter Choice:";
+        cin>>choice;
+        cout<<endl;
+        switch(choice)
+        {
+        case 1:
+        r.print(root);
+        break;
+        case 2:
+        cout<<"Enter Book Name:";
+        cin>>book_name;
+        cout<<"Enter Student CNIC:";
+        cin>>cnic;
+        books[book_name].book_returned(cnic);
+        break;
+        case 3:
+        cout<<"Enter Book Name:";
+        cin>>book_name;
+        cout<<"Enter Student CNIC:";
+        cin>>cnic;
+        books[book_name].book_issued(cnic);
+        break;
+        case 4:
+        cout<<"Enter Book Name:";
+        cin>>book_name;
+        cout<<"Quantity in stock:"<<books[book_name].in_stock<<endl;
+        break;
+        case 5:
+        cout<<"Enter Student CNIC:";
+        cin>>cnic;
+        for(auto x : books)
+        {
+            x.second.student_has_book(cnic);
+        }
+        break;
+        case 6:
+        for(auto x : books)
+        {
+            cout<<"Book Name:"<<x.first<<"\n In Stock:"<<x.second.in_stock<<"\n";
+            x.second.book_has_students();
+            cout<<endl;
+        }
+        break;
+        }
+    }
+
+    return 0;
+}
